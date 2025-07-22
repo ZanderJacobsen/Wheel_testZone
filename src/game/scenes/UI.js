@@ -14,13 +14,13 @@ export class UI extends Scene
 
     create ()
     {
-        this.f_layer = this.add.image(569, 569, 'background').alpha = 0.25;
+        // this.f_layer = this.add.image(569, 569, 'background').alpha = 0.25;
 
-        let name = this.add.text(569, 460, 'UI', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setDepth(100).setOrigin(0.5);
+        // let name = this.add.text(569, 460, 'UI', {
+        //     fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
+        //     stroke: '#000000', strokeThickness: 8,
+        //     align: 'center'
+        // }).setDepth(100).setOrigin(0.5);
         
         this.scene.run('Game');
         

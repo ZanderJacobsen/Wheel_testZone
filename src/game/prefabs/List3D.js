@@ -1,7 +1,7 @@
 import { EventBus } from '../EventBus';
 // import { Container } from 'phaser';
 
-const SCROLLTYPE = {
+export const SCROLLTYPE = {
     WHEEL: 0,
     BAR: 1,
     SPHERE: 2
@@ -131,7 +131,7 @@ export class List3D extends Phaser.GameObjects.Container {
             let diameterDepth = (this.radius + this.childArray[i].radius * this.childArray[i].zeta) / (this.radius * 2);
 
             this.childArray[i].alpha = (this.maxAlpha - this.minAlpha) * diameterDepth + this.minAlpha;
-            this.childArray[i].scale.set((this.maxScale - this.minScale) * diameterDepth + this.minScale);
+            this.childArray[i].scale = (this.maxScale - this.minScale) * diameterDepth + this.minScale;
 
             this.childArray[i].x = horizontalDist * this.childArray[i].radius;
             this.childArray[i].y = verticalDist * this.childArray[i].radius;
@@ -139,7 +139,7 @@ export class List3D extends Phaser.GameObjects.Container {
             if (this.childArray[i].state === STATENUMS.ACTIVE && Math.abs(this.f_items.frontItem.delta % Math.PI * 2) > Math.abs(this.childArray[i].delta % Math.PI * 2))
                 frontItem = this.childArray[i];
         }
-        this.f_items.sort('scale', Phaser.Group.SORT_ASCENDING);
+        this.f_items.sort('scale');
         this.f_items.frontItem = frontItem;
     };
 
@@ -261,12 +261,17 @@ export class List3D extends Phaser.GameObjects.Container {
             }, this);
     };
 
-    insert(wrapper, pos, isDelta) {
+    insert(image, pos, isDelta) {
         if (this.type === SCROLLTYPE.SPHERE)
             return;
+        
+        let wrapper = this.scene.add.container(this.scene, 0, 0);
+        wrapper.state = STATENUMS.ACTIVE;
+        wrapper.add(image);
+        this.f_items.add(wrapper);
 
-        wrapper.callAll('anchor.set', 'anchor', 0.5);
         if (isDelta) {
+            console.log('Inserting with delta:', pos);
             wrapper.delta = pos;
             if (this.type == SCROLLTYPE.WHEEL)
                 wrapper.delta %= Math.PI * 2;
@@ -293,9 +298,6 @@ export class List3D extends Phaser.GameObjects.Container {
                 }
             }
         }
-
-        this.f_items.add(wrapper);
-
     };
 
     insertSphereSpherical(wrapper, delta, phi, r) {
@@ -412,9 +414,9 @@ export class List3D extends Phaser.GameObjects.Container {
 
     // Call last after setuping up all variables
     setupSprites(textures) {
-        this.radiusRand = new Phaser.Math.RandomDataGenerator(this.radiusSeed);
-        this.thetaRand = new Phaser.Math.RandomDataGenerator(this.thetaSeed);
-        this.phiRand = new Phaser.Math.RandomDataGenerator(this.phiSeed);
+        this.radiusRand = new Phaser.Math.RandomDataGenerator([this.radiusSeed]);
+        this.thetaRand = new Phaser.Math.RandomDataGenerator([this.thetaSeed]);
+        this.phiRand = new Phaser.Math.RandomDataGenerator([this.phiSeed]);
 
         if (textures && Array.isArray(textures)) {
             this.f_items.removeAll(true);
@@ -466,8 +468,8 @@ export class List3D extends Phaser.GameObjects.Container {
             //and delta2 in the range 0 to PI.
             //delta is theta and delta2 is phi
             for (let i = 0; i < this.childArray.length; ++i) {
-                this.childArray[i].delta = this.phiRand.realInRange(-Math.PI * 2, Math.PI * 2);
-                this.childArray[i].delta2 = this.thetaRand.realInRange(-Math.PI * 2, Math.PI * 2);
+                this.childArray[i].delta = this.phiRand.rotation();//realInRange(-Math.PI * 2, Math.PI * 2);
+                this.childArray[i].delta2 = this.thetaRand.rotation();//realInRange(-Math.PI * 2, Math.PI * 2);
                 this.childArray[i].radius = this.radiusRand.realInRange(this.radius * 1 / 4, this.radius);
             }
         }
@@ -574,16 +576,6 @@ export class List3D extends Phaser.GameObjects.Container {
                 } else {
                     let currClick = [this.scene.input.activePointer.x - this.x, this.scene.input.activePointer.y - this.y];
                     let lastClick = [this.lastClick.x - this.x, this.lastClick.y - this.y];
-
-                    if (!Global.isSeparateOrientationState && Global.orientation == 'l') {
-                        let orientationFix = 249;
-
-                        currClick[0] -= orientationFix;
-                        currClick[1] += orientationFix;
-
-                        lastClick[0] -= orientationFix;
-                        lastClick[1] += orientationFix;
-                    }
 
                     currClick.push(this.getZ(currClick));
                     lastClick.push(this.getZ(lastClick));
@@ -735,10 +727,10 @@ export class List3D extends Phaser.GameObjects.Container {
         }
         if (!onUp) return;
 
-        let r = this.f_items.filter(item => {
+        let r = this.f_items.list.filter(item => {
             return item.getBounds().contains(pointer.x, pointer.y);
         });
-        r = r['list'];
+        
         if (r.length > 1) {
             let res = Math.max.apply(Math, r.map(i => {
                 return i.alpha !== 0 ? i.z : 0;
@@ -751,8 +743,10 @@ export class List3D extends Phaser.GameObjects.Container {
     };
 
     onDown(pointer) {
+        console.log('onDown', pointer.x, pointer.y);
+        const { tx, ty } = this.getWorldTransformMatrix();
         if (this.getBounds().contains(pointer.x, pointer.y) ||
-            (this.type === SCROLLTYPE.SPHERE && Phaser.Math.distance(pointer.x, pointer.y, this.worldPosition.x, this.worldPosition.y) <= this.radius)) {
+            (this.type === SCROLLTYPE.SPHERE && Phaser.Math.Distance.Between(pointer.x, pointer.y, tx, ty) <= this.radius)) {
             this.initialClick = this.lastClick = new Phaser.Math.Vector2(pointer.x, pointer.y);
             this.lastMove = null;
             if (this.inertiaTween != null)
@@ -843,7 +837,7 @@ export class List3D extends Phaser.GameObjects.Container {
     initialClick;
     lastClick;
     // Callback function for the selected item 
-    callback = (wrapper) => console.log(wrapper.getAt(wrapper.length - 1).key);
+    callback = (wrapper) => console.log(wrapper.getAt(wrapper.length - 1).texture.key);
     // Sets if the input is currently enabled
     inputIsEnabled = false;
     // Use to manually rotate the wheel
@@ -870,8 +864,8 @@ export class List3D extends Phaser.GameObjects.Container {
 
     // Seed to determine where initial SPHERE positions are
     radiusSeed = '1234';
-    thetaSeed = '6969';
-    phiSeed = '421';
+    thetaSeed = '690';
+    phiSeed = '4200';
 
     delta = 0;
     delta2 = 0;
