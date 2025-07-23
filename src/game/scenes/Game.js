@@ -25,6 +25,8 @@ export class Game extends Scene {
         this.registry.set('type', 'WHEEL');
 
         this.registry.events.on('changedata', (parent, key, data) => {
+
+            console.log('Registry changed:', key, data);
             if (key === 'snap') {
                 this.f_wheel.hasSnap = data;
                 this.f_bar.hasSnap = data;

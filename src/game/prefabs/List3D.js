@@ -409,7 +409,7 @@ export class List3D extends Phaser.GameObjects.Container {
     // calculation multiplier for SPHERE 
     // Ranges for radius2 are as follows:
     // WHEEL [-150, 150]    BAR [0, radius]	    SPHERE [1, INF]
-    radius2 = 300;
+    radius2 = 30;
     // Whether the user is currently dragging or not
     // Used to stop any unwanted selection
     dragging = false;

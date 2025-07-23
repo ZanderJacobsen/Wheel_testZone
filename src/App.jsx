@@ -21,6 +21,10 @@ function App() {
     const [snapFlag, setSnapFlag] = useState(false);
     const [inertFlag, setInertFlag] = useState(true);
 
+    const [slider1, setSlider1] = useState(0);
+    const [slider2, setSlider2] = useState(200);
+    const [slider3, setSlider3] = useState(30);
+
     const changeScene = () => {
 
         const scene = phaserRef.current.scene;
@@ -76,7 +80,7 @@ function App() {
 
     return (
         <div id="app">
-            <PhaserGame ref={phaserRef} currentActiveScene={currentScene}/>
+            <PhaserGame ref={phaserRef} currentActiveScene={currentScene} />
             <div>
                 <div>
                     <button className="button" onClick={changeScene}>Change Scene</button>
@@ -84,31 +88,22 @@ function App() {
                 <div>
                     <label>
                         <input
-                            type="radio"
-                            name="scrollType"
-                            value="WHEEL"
-                            checked={scrollType === 'WHEEL'}
-                            onChange={e => {setScrollType(e.target.value); editRegistry('type', e.target.value); }}
+                            type="radio" name="scrollType" value="WHEEL" checked={scrollType === 'WHEEL'}
+                            onChange={e => { setScrollType(e.target.value); editRegistry('type', e.target.value); }}
                         />
                         WHEEL
                     </label>
                     <label>
                         <input
-                            type="radio"
-                            name="scrollType"
-                            value="BAR"
-                            checked={scrollType === 'BAR'}
-                            onChange={e => {setScrollType(e.target.value); editRegistry('type', e.target.value); }}
+                            type="radio" name="scrollType" value="BAR" checked={scrollType === 'BAR'}
+                            onChange={e => { setScrollType(e.target.value); editRegistry('type', e.target.value); }}
                         />
                         BAR
                     </label>
                     <label>
                         <input
-                            type="radio"
-                            name="scrollType"
-                            value="SPHERE"
-                            checked={scrollType === 'SPHERE'}
-                            onChange={e => {setScrollType(e.target.value); editRegistry('type', e.target.value); }}
+                            type="radio" name="scrollType" value="SPHERE" checked={scrollType === 'SPHERE'}
+                            onChange={e => { setScrollType(e.target.value); editRegistry('type', e.target.value); }}
                         />
                         SPHERE
                     </label>
@@ -151,6 +146,36 @@ function App() {
                 </div>
                 <div>
                     <button className="button" onClick={addSprite}>Add Gem</button>
+                </div>
+                <div>
+                    <label>
+                        Direction:
+                        <input
+                            type="range" min="0" max="360" value={slider1}
+                            onChange={e => {setSlider1(Number(e.target.value)); editRegistry('direction', e.target.value); }}
+                        />
+                        {slider1}
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        Radius:
+                        <input
+                            type="range" min="50" max="500" value={slider2}
+                            onChange={e => {setSlider2(Number(e.target.value)); editRegistry('radius', e.target.value); }}
+                        />
+                        {slider2}
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        Tilt/Threshold:
+                        <input
+                            type="range" min="-180" max="180" value={slider3}
+                            onChange={e => {setSlider3(Number(e.target.value)); editRegistry('radius2', e.target.value); }}
+                        />
+                        {slider3}
+                    </label>
                 </div>
             </div>
         </div>
