@@ -117,12 +117,12 @@ function App() {
                 <div>
                     <label> Snap On:
                         <input type="checkbox" checked={snapFlag}
-                            onChange={e => { setSnapFlag(e.target.checked); editRegistry('snap', e.target.checked); }}
+                            onChange={e => { setSnapFlag(e.target.checked); editRegistry('hasSnap', e.target.checked); }}
                         />
                     </label>
                     <label> Inertia On:
                         <input type="checkbox" checked={inertFlag}
-                            onChange={e => { setInertFlag(e.target.checked); editRegistry('inertia', e.target.checked); }}
+                            onChange={e => { setInertFlag(e.target.checked); editRegistry('hasInertia', e.target.checked); }}
                         />
                     </label>
                 </div>

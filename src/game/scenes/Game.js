@@ -16,48 +16,12 @@ export class Game extends Scene {
     }
 
     create() {
-        this.cameras.main.setBackgroundColor(0x333333);
+        this.cameras.main.setBackgroundColor(0xffffff);
 
         this.setup3DLists();
 
-        this.registry.set('snap', false);
-        this.registry.set('inertia', true);
-        this.registry.set('type', 'WHEEL');
-
-        this.registry.events.on('changedata', (parent, key, data) => {
-
-            console.log('Registry changed:', key, data);
-            if (key === 'snap') {
-                this.f_wheel.hasSnap = data;
-                this.f_bar.hasSnap = data;
-                this.f_sphere.hasSnap = data;
-            }
-            if (key === 'inertia') {
-                this.f_wheel.hasInertia = data;
-                this.f_bar.hasInertia = data;
-                this.f_sphere.hasInertia = data;
-            }
-            if (key === 'type') {
-                this.currentList.disableInput();
-                this.tweens.add({
-                    targets: this.currentList,
-                    scale: 0,
-                    duration: 500,
-                    ease: 'Back.easeIn',
-                });
-                this.currentList = this.listsEnum[data];
-                this.tweens.add({
-                    targets: this.currentList,
-                    scale: 1,
-                    duration: 500,
-                    delay: 500,
-                    ease: 'Back.easeOut',
-                    onComplete: () => {
-                        this.currentList.enableInput();
-                    }
-                });
-            }
-        });
+        this.setupRegistry();
+        this.setupRegistryEvents();
 
         EventBus.emit('current-scene-ready', this);
     }
@@ -88,6 +52,48 @@ export class Game extends Scene {
             BAR: this.f_bar,
             SPHERE: this.f_sphere
         };
+    }
+
+    setupRegistry() {
+        this.registry.set('hasSnap', false);
+        this.registry.set('hasInertia', true);
+        this.registry.set('direction', 0);
+        this.registry.set('radius', 200);
+        this.registry.set('radius2', 30);
+        this.registry.set('type', 'WHEEL');
+    }
+
+    setupRegistryEvents() {
+        this.registry.events.on('changedata', (parent, key, data) => {
+
+            console.log('Registry changed:', key, data, this.currentList[key]);
+            if (key === 'type') {
+                this.currentList.disableInput();
+                this.tweens.add({
+                    targets: this.currentList,
+                    scale: 0,
+                    duration: 500,
+                    ease: 'Back.easeIn',
+                });
+                this.currentList = this.listsEnum[data];
+                this.tweens.add({
+                    targets: this.currentList,
+                    scale: 1,
+                    duration: 500,
+                    delay: 500,
+                    ease: 'Back.easeOut',
+                    onComplete: () => {
+                        this.currentList.enableInput();
+                    }
+                });
+            }
+            else if(this.currentList[key] !== null) {
+                let d = key == 'direction' ? Phaser.Math.DegToRad(data) : data;
+                this.f_wheel[key] = d;
+                this.f_bar[key] = d;
+                this.f_sphere[key] = d;
+            }
+        });
     }
 
     // Work on game objects at each game step
