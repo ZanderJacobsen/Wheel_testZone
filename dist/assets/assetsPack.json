@@ -1,0 +1,77 @@
+{
+  "BaseTemplate": {
+    "path": "assets/BaseTemplate",
+    "defaultType": "image",
+    "files": [
+      {
+        "key": "debugBtn",
+        "url": "debugBtn.png"
+      },
+          {
+        "key": "debugBtn",
+        "url": "debugBtn.png"
+      },
+      {
+        "key": "CTA",
+        "url": "CTA.png"
+      },
+      {
+        "key": "background",
+        "url": "bg.png"
+      },
+      {
+        "key": "star",
+        "url": "star.png"
+      },
+      {
+        "key": "logo",
+        "url": "logo.png"
+      }
+    ]
+  },
+  
+  "Art": {
+    "path": "assets/01_Art",
+    "defaultType": "image",
+    "files": [
+      {
+        "key": "Blue",
+        "url": "Crystals/Blue.png"
+      },
+      {
+        "key": "Emerald",
+        "url": "Crystals/Emerald.png"
+      },
+      {
+        "key": "Green",
+        "url": "Crystals/Green.png"
+      },
+      {
+        "key": "Orange",
+        "url": "Crystals/Orange.png"
+      },
+      {
+        "key": "Pink",
+        "url": "Crystals/Pink.png"
+      },
+      {
+        "key": "Red",
+        "url": "Crystals/Red.png"
+      },
+      {
+        "key": "Yellow",
+        "url": "Crystals/Yellow.png"
+      },
+      {
+        "key": "OrbWhite",
+        "url": "OrbWhite.png"
+      },
+      {
+        "key": "Prompt",
+        "url": "Prompt.png"
+      }
+    ]
+}
+
+}
+
